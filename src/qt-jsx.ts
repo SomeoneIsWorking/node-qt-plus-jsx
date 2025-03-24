@@ -41,7 +41,7 @@ export function createElement(
   };
 }
 
-export function createWidget(element: JSXElement): any {
+export function createWidget(element: JSXElement, parentWidget?: QWidget): any {
   if (typeof element.type === "function") {
     const result = element.type(element.props);
     return createWidget(result);
@@ -67,10 +67,7 @@ export function createWidget(element: JSXElement): any {
 
       if (element.props.children) {
         element.props.children.forEach((child) => {
-          const childWidget = createWidget(child as JSXElement);
-          if (childWidget instanceof QWidget) {
-            window.setLayout(childWidget);
-          }
+          createWidget(child as JSXElement, window);
         });
       }
 
@@ -78,15 +75,14 @@ export function createWidget(element: JSXElement): any {
       return window;
     }
     case "vbox": {
-      const layout = new QVBoxLayout();
-
+      const layout = new QVBoxLayout(parentWidget);
       element.props.children?.forEach((child) => {
         const childWidget =
           child instanceof QWidget ? child : createWidget(child as JSXElement);
-        if (childWidget instanceof QWidget) {
-          layout.addWidget(childWidget);
-        } else if (childWidget instanceof QVBoxLayout) {
+        if (childWidget instanceof QVBoxLayout) {
           layout.addLayout(childWidget);
+        } else {
+          layout.addWidget(childWidget);
         }
       });
       return layout;

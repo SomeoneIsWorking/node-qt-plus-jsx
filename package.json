@@ -9,13 +9,8 @@
     "dev": "tsc -w",
     "demo": "tsx src/demo.ts"
   },
-  "dependencies": {
-    "node-addon-api": "^7.0.0",
-    "react": "^19.0.0"
-  },
   "devDependencies": {
     "@types/node": "^20.0.0",
-    "@types/react": "^18.3.20",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.3",
     "typescript": "^5.0.0"
