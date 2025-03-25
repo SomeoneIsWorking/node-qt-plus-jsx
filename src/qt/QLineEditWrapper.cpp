@@ -10,6 +10,7 @@ Napi::Object QLineEditWrapper::Init(Napi::Env env, Napi::Object exports) {
     Napi::Function func = DefineClass(env, "QLineEdit", {
         InstanceMethod("setText", &QLineEditWrapper::SetText),
         InstanceMethod("textChanged", &QLineEditWrapper::TextChanged),
+        InstanceMethod("deleteLater", &QLineEditWrapper::DeleteLater),
     });
 
     constructor = Napi::Persistent(func);
@@ -58,4 +59,13 @@ Napi::Value QLineEditWrapper::TextChanged(const Napi::CallbackInfo& info) {
     });
 
     return env_.Null();
+}
+
+Napi::Value QLineEditWrapper::DeleteLater(const Napi::CallbackInfo& info) {
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    std::cout << "Scheduling QLineEdit for deletion" << std::endl;
+    instance->deleteLater();
+    return env.Null();
 } 

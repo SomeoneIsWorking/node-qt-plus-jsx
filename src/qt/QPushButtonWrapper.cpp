@@ -10,6 +10,7 @@ Napi::Object QPushButtonWrapper::Init(Napi::Env env, Napi::Object exports) {
     Napi::Function func = DefineClass(env, "QPushButton", {
         InstanceMethod("setText", &QPushButtonWrapper::SetText),
         InstanceMethod("clicked", &QPushButtonWrapper::Clicked),
+        InstanceMethod("deleteLater", &QPushButtonWrapper::DeleteLater),
     });
 
     constructor = Napi::Persistent(func);
@@ -75,4 +76,13 @@ Napi::Value QPushButtonWrapper::Clicked(const Napi::CallbackInfo& info) {
     std::cout << "Click handler setup complete" << std::endl;
 
     return env_.Null();
+}
+
+Napi::Value QPushButtonWrapper::DeleteLater(const Napi::CallbackInfo& info) {
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    std::cout << "Scheduling QPushButton for deletion" << std::endl;
+    instance->deleteLater();
+    return env.Null();
 } 

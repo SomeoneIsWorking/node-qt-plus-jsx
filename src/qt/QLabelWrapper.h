@@ -17,4 +17,5 @@ private:
 
     Napi::Value SetText(const Napi::CallbackInfo& info);
     Napi::Value Text(const Napi::CallbackInfo& info);
+    Napi::Value DeleteLater(const Napi::CallbackInfo& info);
 }; 

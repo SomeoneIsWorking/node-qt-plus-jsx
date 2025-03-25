@@ -17,4 +17,6 @@ private:
     static Napi::FunctionReference constructor;
     ::QPushButton* instance;
     Napi::Env env_;
+
+    Napi::Value DeleteLater(const Napi::CallbackInfo& info);
 }; 

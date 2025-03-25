@@ -1,6 +1,7 @@
 import { Signal } from "../signal";
+import { ReactiveList } from "../reactive-list";
 
-type SignalValue<T> = T | Signal<T>;
+type SignalOrValue<T> = T | Signal<T>;
 
 declare global {
     namespace JSX {
@@ -16,7 +17,7 @@ declare global {
             type: string | Function;
             props: {
                 children?: JSXChildren;
-                text?: SignalValue<string>;
+                text?: SignalOrValue<string>;
                 onClick?: () => void;
                 onChange?: (text: string) => void;
                 title?: string;
@@ -24,6 +25,7 @@ declare global {
                 height?: number;
                 x?: number;
                 y?: number;
+                items?: ReactiveList<any>;
             };
         }
         
@@ -31,12 +33,14 @@ declare global {
             widget: { children?: JSXChildren };
             vbox: { children?: JSXChildren };
             hbox: { children?: JSXChildren };
-            button: { onClick?: () => void; text?: SignalValue<string>; children?: JSXChildren };
-            label: { text?: SignalValue<string>; children?: JSXChildren };
-            input: { onChange?: (text: string) => void; text?: SignalValue<string> };
+            button: { onClick?: () => void; text?: SignalOrValue<string>; children?: JSXChildren };
+            label: { text?: SignalOrValue<string>; children?: JSXChildren };
+            input: { onChange?: (text: string) => void; text?: SignalOrValue<string> };
             application: { children?: JSXChildren };
             window: { title?: string; width?: number; height?: number; children?: JSXChildren };
             table: { children?: JSXChildren };
+            list: { items: ReactiveList<any>; children?: JSXChildren };
+            template: { children?: JSXChildren };
         }
 
         interface IntrinsicAttributes {

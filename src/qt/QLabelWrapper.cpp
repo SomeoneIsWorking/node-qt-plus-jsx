@@ -1,4 +1,5 @@
 #include "QLabelWrapper.h"
+#include <iostream>
 
 Napi::FunctionReference QLabelWrapper::constructor;
 
@@ -6,6 +7,7 @@ Napi::Object QLabelWrapper::Init(Napi::Env env, Napi::Object exports) {
     Napi::Function func = DefineClass(env, "QLabel", {
         InstanceMethod("setText", &QLabelWrapper::SetText),
         InstanceMethod("text", &QLabelWrapper::Text),
+        InstanceMethod("deleteLater", &QLabelWrapper::DeleteLater),
     });
 
     constructor = Napi::Persistent(func);
@@ -60,4 +62,13 @@ Napi::Value QLabelWrapper::Text(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
     QString text = instance->text();
     return Napi::String::New(env, text.toStdString());
+}
+
+Napi::Value QLabelWrapper::DeleteLater(const Napi::CallbackInfo& info) {
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    std::cout << "Scheduling QLabel for deletion" << std::endl;
+    instance->deleteLater();
+    return env.Null();
 } 

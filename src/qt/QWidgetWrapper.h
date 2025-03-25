@@ -19,4 +19,5 @@ private:
     Napi::Value Show(const Napi::CallbackInfo& info);
     Napi::Value SetLayout(const Napi::CallbackInfo& info);
     Napi::Value Resize(const Napi::CallbackInfo& info);
+    Napi::Value DeleteLater(const Napi::CallbackInfo& info);
 }; 

@@ -12,6 +12,9 @@ public:
     ::QHBoxLayout* GetInstance() { return instance; }
     Napi::Value AddWidget(const Napi::CallbackInfo& info);
     Napi::Value AddLayout(const Napi::CallbackInfo& info);
+    Napi::Value RemoveWidget(const Napi::CallbackInfo& info);
+    Napi::Value RemoveLayout(const Napi::CallbackInfo& info);
+    Napi::Value DeleteLater(const Napi::CallbackInfo& info);
 
 private:
     static Napi::FunctionReference constructor;

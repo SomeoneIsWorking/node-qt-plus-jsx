@@ -14,6 +14,7 @@ Napi::Object QWidgetWrapper::Init(Napi::Env env, Napi::Object exports) {
         InstanceMethod("show", &QWidgetWrapper::Show),
         InstanceMethod("setLayout", &QWidgetWrapper::SetLayout),
         InstanceMethod("resize", &QWidgetWrapper::Resize),
+        InstanceMethod("deleteLater", &QWidgetWrapper::DeleteLater),
     });
 
     constructor = Napi::Persistent(func);
@@ -117,5 +118,14 @@ Napi::Value QWidgetWrapper::Resize(const Napi::CallbackInfo& info) {
     
     std::cout << "Resizing window to: " << width << "x" << height << std::endl;
     instance->resize(width, height);
+    return env.Null();
+}
+
+Napi::Value QWidgetWrapper::DeleteLater(const Napi::CallbackInfo& info) {
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    std::cout << "Scheduling QWidget for deletion" << std::endl;
+    instance->deleteLater();
     return env.Null();
 } 

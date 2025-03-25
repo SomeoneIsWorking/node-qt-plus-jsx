@@ -8,6 +8,9 @@ Napi::Object QVBoxLayoutWrapper::Init(Napi::Env env, Napi::Object exports) {
     Napi::Function func = DefineClass(env, "QVBoxLayout", {
         InstanceMethod("addWidget", &QVBoxLayoutWrapper::AddWidget),
         InstanceMethod("addLayout", &QVBoxLayoutWrapper::AddLayout),
+        InstanceMethod("removeWidget", &QVBoxLayoutWrapper::RemoveWidget),
+        InstanceMethod("removeLayout", &QVBoxLayoutWrapper::RemoveLayout),
+        InstanceMethod("deleteLater", &QVBoxLayoutWrapper::DeleteLater),
     });
 
     constructor = Napi::Persistent(func);
@@ -57,4 +60,45 @@ Napi::Value QVBoxLayoutWrapper::AddLayout(const Napi::CallbackInfo& info) {
 
     instance->addLayout(layoutWrapper->GetInstance());
     return info.This();
+}
+
+Napi::Value QVBoxLayoutWrapper::RemoveWidget(const Napi::CallbackInfo& info) {
+    if (info.Length() < 1) {
+        Napi::TypeError::New(env_, "Wrong number of arguments").ThrowAsJavaScriptException();
+        return env_.Null();
+    }
+
+    QWidgetWrapper* widgetWrapper = Napi::ObjectWrap<QWidgetWrapper>::Unwrap(info[0].As<Napi::Object>());
+    if (!widgetWrapper) {
+        Napi::TypeError::New(env_, "Invalid widget argument").ThrowAsJavaScriptException();
+        return env_.Null();
+    }
+
+    instance->removeWidget(widgetWrapper->GetInstance());
+    return info.This();
+}
+
+Napi::Value QVBoxLayoutWrapper::RemoveLayout(const Napi::CallbackInfo& info) {
+    if (info.Length() < 1) {
+        Napi::TypeError::New(env_, "Wrong number of arguments").ThrowAsJavaScriptException();
+        return env_.Null();
+    }
+
+    QVBoxLayoutWrapper* layoutWrapper = Napi::ObjectWrap<QVBoxLayoutWrapper>::Unwrap(info[0].As<Napi::Object>());
+    if (!layoutWrapper) {
+        Napi::TypeError::New(env_, "Invalid layout argument").ThrowAsJavaScriptException();
+        return env_.Null();
+    }
+
+    instance->removeItem(layoutWrapper->GetInstance());
+    return info.This();
+}
+
+Napi::Value QVBoxLayoutWrapper::DeleteLater(const Napi::CallbackInfo& info) {
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    std::cout << "Scheduling QVBoxLayout for deletion" << std::endl;
+    instance->deleteLater();
+    return env.Null();
 } 

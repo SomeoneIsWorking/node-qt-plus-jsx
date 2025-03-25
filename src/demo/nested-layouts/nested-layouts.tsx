@@ -1,9 +1,8 @@
 /** @jsx createElement */
-import { createWidget, createElement } from './qt-jsx.js';
-import type { JSXElement } from './types/jsx.js';
+import { createWidget, createElement } from '../../qt-jsx.js';
 
 // Main application component
-const App = (): JSXElement => {
+const App = () => {
   return (
     <application>
       <window title="Nested layouts">
