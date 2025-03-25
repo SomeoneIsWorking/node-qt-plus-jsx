@@ -4,15 +4,16 @@
     "module": "ES2020",
     "moduleResolution": "node",
     "strict": true,
-    "jsx": "react",
-    "jsxFactory": "createElement",
-    "jsxFragmentFactory": "Fragment",
+    "jsx": "react-jsx",
+    "jsxImportSource": ".",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "dist",
     "declaration": true,
-    "lib": ["ES2020", "DOM"]
+    "lib": ["ES2020", "DOM"],
+    "typeRoots": ["./src/types", "./node_modules/@types"],
+    "baseUrl": "src"
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

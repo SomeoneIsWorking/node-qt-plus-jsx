@@ -1,17 +1,17 @@
 declare global {
     namespace JSX {
         interface ElementClass {
-            render(): Element;
+            render(): JSX.Element;
         }
 
         interface ElementChildrenAttribute { 
-            children?: (Element | typeof QWidget)[]; 
+            children?: JSXChildren; 
         }
 
         interface Element {
             type: string | Function;
             props: {
-                children?: (Element | typeof QWidget)[];
+                children?: JSXChildren;
                 text?: string;
                 onClick?: () => void;
                 onChange?: (text: string) => void;
@@ -24,27 +24,30 @@ declare global {
         }
         
         interface IntrinsicElements {
-            widget: { children?: (Element | typeof QWidget)[] };
-            vbox: { children?: (Element | typeof QWidget)[] };
-            hbox: { children?: (Element | typeof QWidget)[] };
-            button: { onClick?: () => void; text?: string; children?: (Element | typeof QWidget)[] };
-            label: { text?: string; children?: (Element | typeof QWidget)[] };
+            widget: { children?: JSXChildren };
+            vbox: { children?: JSXChildren };
+            hbox: { children?: JSXChildren };
+            button: { onClick?: () => void; text?: string; children?: JSXChildren };
+            label: { text?: string; children?: JSXChildren };
             input: { onChange?: (text: string) => void; text?: string };
-            application: { children?: (Element | typeof QWidget)[] };
-            window: { title?: string; width?: number; height?: number; children?: (Element | typeof QWidget)[] };
+            application: { children?: JSXChildren };
+            window: { title?: string; width?: number; height?: number; children?: JSXChildren };
+            table: { children?: JSXChildren };
         }
 
         interface IntrinsicAttributes {
-            children?: (Element | typeof QWidget)[];
+            children?: JSXChildren;
         }
 
         interface IntrinsicClassAttributes<T> {
-            children?: (Element | typeof QWidget)[];
+            children?: JSXChildren;
         }
 
-        type ReactNode = Element | (Element | typeof QWidget)[] | null | undefined;
+        type ReactNode = JSX.Element | (JSX.Element | typeof QWidget)[] | null | undefined;
         type FunctionComponent<P = {}> = (props: P) => ReactNode;
     }
 }
 
-export {}; 
+export interface JSXElement extends JSX.Element {}
+export type JSXChild = JSX.Element | typeof QWidget;
+export type JSXChildren = JSXChild[] | JSXChild; 

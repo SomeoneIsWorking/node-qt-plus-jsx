@@ -12,19 +12,11 @@ const QLineEdit = qt.QLineEdit;
 const QTableView = qt.QTableView;
 const QApplication = qt.QApplication;
 
-// JSX support
-export interface JSXElement {
+interface JSXElement {
   type: string | Function;
   props: {
-    children?: (JSXElement | typeof QWidget)[];
-    text?: string;
-    onClick?: () => void;
-    onChange?: (text: string) => void;
-    title?: string;
-    width?: number;
-    height?: number;
-    x?: number;
-    y?: number;
+    children?: JSXElement[];
+    [key: string]: any;
   };
 }
 
@@ -37,26 +29,32 @@ export function createElement(
     type,
     props: {
       ...props,
-      children: children,
+      children: children.flat().filter(child => child != null),
     },
   };
 }
 
-export function createWidget(element: JSXElement, parentWidget?: QWidget): any {
+function ensureArray<T>(value: T | T[]): T[] {
+  return Array.isArray(value) ? value : [value];
+}
+
+export function createWidget(element: JSXElement, parentWidget?: any): any {
   if (typeof element.type === "function") {
     const result = element.type(element.props);
-    return createWidget(result);
+    return createWidget(result as JSXElement);
   }
 
   switch (element.type) {
     case "application": {
       const app = new QApplication();
       if (element.props.children) {
-        const windowWidget = createWidget(element.props.children[0]);
+        const children = ensureArray(element.props.children);
+        const windowWidget = createWidget(children[0] as JSXElement);
         if (windowWidget && windowWidget.show) {
           windowWidget.show();
         }
       }
+      app.exec();
       return app;
     }
 
@@ -72,8 +70,12 @@ export function createWidget(element: JSXElement, parentWidget?: QWidget): any {
 
       if (element.props.children) {
         // For window, we expect exactly one child which should be a layout
-        const child = element.props.children[0];
-        createWidget(child as JSXElement, window);
+        const children = ensureArray(element.props.children);
+        const layout = createWidget(children[0] as JSXElement);
+        if (layout && layout.addWidget) {
+          // If the child returned a layout, set it as the window's layout
+          window.setLayout(layout);
+        }
       }
 
       return window;
@@ -81,46 +83,44 @@ export function createWidget(element: JSXElement, parentWidget?: QWidget): any {
     case "vbox": {
       console.log("Creating vbox layout");
       const layout = new QVBoxLayout();
-      let container: typeof QWidget | undefined;
-      
-      // If we have a parent widget, create a container for nested layout
-      if (parentWidget) {
-        container = new QWidget(parentWidget);
-        container.setLayout(layout);
-      }
 
       // Process all children
       if (element.props.children) {
-        console.log(`Processing ${element.props.children.length} vbox children`);
-        element.props.children.forEach((child) => {
+        const children = ensureArray(element.props.children);
+        console.log(`Processing ${children.length} vbox children`);
+        children.forEach((child) => {
           console.log("Processing vbox child:", child);
-          // Use container as parent if we have one, otherwise use parentWidget
-          const childWidget = createWidget(child as JSXElement, container || parentWidget);
-          // Check if it's a layout by presence of addLayout method
-          if (childWidget && childWidget.addLayout) {
-            console.log("Adding layout to layout");
-            layout.addLayout(childWidget);
-          } else {
-            console.log("Adding widget to layout");
-            layout.addWidget(childWidget);
+          const childWidget = createWidget(child as JSXElement);
+          if (childWidget) {
+            if (childWidget.addLayout) {
+              console.log("Adding layout to layout");
+              layout.addLayout(childWidget);
+            } else {
+              console.log("Adding widget to layout");
+              layout.addWidget(childWidget);
+            }
           }
         });
       }
       
-      return container || layout;
+      return layout;
     }
     case "hbox": {
       const layout = new QHBoxLayout();
 
-      element.props.children?.forEach((child) => {
-        const childWidget = createWidget(child as JSXElement);
-        // Check if it's a layout by presence of addLayout method
-        if (childWidget && childWidget.addLayout) {
-          layout.addLayout(childWidget);
-        } else {
-          layout.addWidget(childWidget);
-        }
-      });
+      if (element.props.children) {
+        const children = ensureArray(element.props.children);
+        children.forEach((child) => {
+          const childWidget = createWidget(child as JSXElement);
+          if (childWidget) {
+            if (childWidget.addLayout) {
+              layout.addLayout(childWidget);
+            } else {
+              layout.addWidget(childWidget);
+            }
+          }
+        });
+      }
       return layout;
     }
     case "button": {
@@ -128,13 +128,10 @@ export function createWidget(element: JSXElement, parentWidget?: QWidget): any {
       if (element.props.onClick) {
         button.clicked(element.props.onClick);
       }
-      if (parentWidget) {
-        button.setParent(parentWidget);
-      }
       return button;
     }
     case "label": {
-      const label = new QLabel(element.props.text || "", parentWidget);
+      const label = new QLabel(element.props.text || "");
       return label;
     }
     case "input": {
@@ -145,16 +142,10 @@ export function createWidget(element: JSXElement, parentWidget?: QWidget): any {
       if (element.props.text) {
         input.setText(element.props.text);
       }
-      if (parentWidget) {
-        input.setParent(parentWidget);
-      }
       return input;
     }
     case "table": {
       const table = new QTableView();
-      if (parentWidget) {
-        table.setParent(parentWidget);
-      }
       return table;
     }
     default:
@@ -162,5 +153,5 @@ export function createWidget(element: JSXElement, parentWidget?: QWidget): any {
   }
 }
 
-// Export Qt components
+// Export everything needed for JSX
 export { QWidget, QApplication };
