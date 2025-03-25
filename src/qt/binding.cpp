@@ -15,7 +15,8 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
     QTableViewWrapper::Init(env, exports);
     QHBoxLayoutWrapper::Init(env, exports);
     QVBoxLayoutWrapper::Init(env, exports);
+    
     return exports;
 }
 
-NODE_API_MODULE(node_qt, Init) 
+NODE_API_MODULE(NODE_GYP_MODULE_NAME, Init) 

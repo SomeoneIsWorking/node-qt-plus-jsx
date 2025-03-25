@@ -1,17 +1,20 @@
 #pragma once
 
-#include "QLayoutWrapper.h"
+#include <napi.h>
 #include <QVBoxLayout>
 
-class QVBoxLayoutWrapper : public QLayoutWrapper {
+class QVBoxLayoutWrapper : public Napi::ObjectWrap<QVBoxLayoutWrapper> {
 public:
     static Napi::Object Init(Napi::Env env, Napi::Object exports);
     QVBoxLayoutWrapper(const Napi::CallbackInfo& info);
     ~QVBoxLayoutWrapper();
 
-    using QLayoutWrapper::AddWidget;
-    using QLayoutWrapper::AddLayout;
+    ::QVBoxLayout* GetInstance() { return instance; }
+    Napi::Value AddWidget(const Napi::CallbackInfo& info);
+    Napi::Value AddLayout(const Napi::CallbackInfo& info);
 
 private:
     static Napi::FunctionReference constructor;
+    ::QVBoxLayout* instance;
+    Napi::Env env_;
 }; 

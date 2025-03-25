@@ -1,5 +1,6 @@
 #include "QWidgetWrapper.h"
-#include "QLayoutWrapper.h"
+#include "QHBoxLayoutWrapper.h"
+#include "QVBoxLayoutWrapper.h"
 #include <iostream>
 
 Napi::FunctionReference QWidgetWrapper::constructor;
@@ -75,13 +76,23 @@ Napi::Value QWidgetWrapper::SetLayout(const Napi::CallbackInfo& info) {
     }
 
     std::cout << "Setting layout on QWidget" << std::endl;
-    QLayoutWrapper* layoutWrapper = Napi::ObjectWrap<QLayoutWrapper>::Unwrap(info[0].As<Napi::Object>());
-    if (!layoutWrapper) {
-        Napi::TypeError::New(env, "Invalid layout").ThrowAsJavaScriptException();
+    
+    // Try to unwrap as QHBoxLayout
+    QHBoxLayoutWrapper* hboxLayout = Napi::ObjectWrap<QHBoxLayoutWrapper>::Unwrap(info[0].As<Napi::Object>());
+    if (hboxLayout) {
+        instance->setLayout(hboxLayout->GetInstance());
+        std::cout << "HBoxLayout set successfully on QWidget" << std::endl;
         return env.Null();
     }
     
-    instance->setLayout(layoutWrapper->GetInstance());
-    std::cout << "Layout set successfully on QWidget" << std::endl;
+    // Try to unwrap as QVBoxLayout
+    QVBoxLayoutWrapper* vboxLayout = Napi::ObjectWrap<QVBoxLayoutWrapper>::Unwrap(info[0].As<Napi::Object>());
+    if (vboxLayout) {
+        instance->setLayout(vboxLayout->GetInstance());
+        std::cout << "VBoxLayout set successfully on QWidget" << std::endl;
+        return env.Null();
+    }
+    
+    Napi::TypeError::New(env, "Invalid layout type").ThrowAsJavaScriptException();
     return env.Null();
 } 

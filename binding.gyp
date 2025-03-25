@@ -8,7 +8,6 @@
       "src/qt/QLabelWrapper.cpp",
       "src/qt/QLineEditWrapper.cpp",
       "src/qt/QTableViewWrapper.cpp",
-      "src/qt/QLayoutWrapper.cpp",
       "src/qt/QHBoxLayoutWrapper.cpp",
       "src/qt/QVBoxLayoutWrapper.cpp"
     ],
