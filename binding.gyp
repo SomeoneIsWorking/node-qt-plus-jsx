@@ -9,7 +9,8 @@
       "src/qt/QLineEditWrapper.cpp",
       "src/qt/QTableViewWrapper.cpp",
       "src/qt/QHBoxLayoutWrapper.cpp",
-      "src/qt/QVBoxLayoutWrapper.cpp"
+      "src/qt/QVBoxLayoutWrapper.cpp",
+      "src/qt/QPushButtonWrapper.cpp"
     ],
     "include_dirs": [
       "<!@(node -p \"require('node-addon-api').include\")",

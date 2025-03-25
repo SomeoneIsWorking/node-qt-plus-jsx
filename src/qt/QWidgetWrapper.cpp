@@ -13,6 +13,7 @@ Napi::Object QWidgetWrapper::Init(Napi::Env env, Napi::Object exports) {
         InstanceMethod("setWindowTitle", &QWidgetWrapper::SetWindowTitle),
         InstanceMethod("show", &QWidgetWrapper::Show),
         InstanceMethod("setLayout", &QWidgetWrapper::SetLayout),
+        InstanceMethod("resize", &QWidgetWrapper::Resize),
     });
 
     constructor = Napi::Persistent(func);
@@ -94,5 +95,27 @@ Napi::Value QWidgetWrapper::SetLayout(const Napi::CallbackInfo& info) {
     }
     
     Napi::TypeError::New(env, "Invalid layout type").ThrowAsJavaScriptException();
+    return env.Null();
+}
+
+Napi::Value QWidgetWrapper::Resize(const Napi::CallbackInfo& info) {
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() < 2) {
+        Napi::TypeError::New(env, "Wrong number of arguments").ThrowAsJavaScriptException();
+        return env.Null();
+    }
+
+    if (!info[0].IsNumber() || !info[1].IsNumber()) {
+        Napi::TypeError::New(env, "Wrong arguments").ThrowAsJavaScriptException();
+        return env.Null();
+    }
+
+    int width = info[0].As<Napi::Number>().Int32Value();
+    int height = info[1].As<Napi::Number>().Int32Value();
+    
+    std::cout << "Resizing window to: " << width << "x" << height << std::endl;
+    instance->resize(width, height);
     return env.Null();
 } 

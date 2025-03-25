@@ -1,4 +1,5 @@
 import { createRequire } from "module";
+import { Signal } from "./signal";
 const require = createRequire(import.meta.url);
 const qt = require("../build/Release/node-qt.node");
 
@@ -38,6 +39,10 @@ function ensureArray<T>(value: T | T[]): T[] {
   return Array.isArray(value) ? value : [value];
 }
 
+function isSignal<T>(value: T | Signal<T>): value is Signal<T> {
+  return value instanceof Signal;
+}
+
 export function createWidget(element: JSXElement, parentWidget?: any): any {
   if (typeof element.type === "function") {
     const result = element.type(element.props);
@@ -45,6 +50,17 @@ export function createWidget(element: JSXElement, parentWidget?: any): any {
   }
 
   switch (element.type) {
+    case "widget": {
+      // If the child is a QWidget instance, return it directly
+      const children = ensureArray(element.props.children || []);
+      if (children.length === 1) {
+        const child = children[0];
+        if (child && typeof child === 'object' && 'show' in child) {
+          return child;
+        }
+      }
+      return createWidget(children[0] as JSXElement);
+    }
     case "application": {
       const app = new QApplication();
       if (element.props.children) {
@@ -57,7 +73,6 @@ export function createWidget(element: JSXElement, parentWidget?: any): any {
       app.exec();
       return app;
     }
-
     case "window": {
       console.log("Creating window");
       const window = new QWidget();
@@ -124,14 +139,26 @@ export function createWidget(element: JSXElement, parentWidget?: any): any {
       return layout;
     }
     case "button": {
-      const button = new QPushButton(element.props.text || "");
+      const text = element.props.text;
+      const button = new QPushButton(isSignal(text) ? text.get().toString() : (text || ""));
+      if (isSignal(text)) {
+        text.connect((value) => {
+          button.setText(value.toString());
+        });
+      }
       if (element.props.onClick) {
         button.clicked(element.props.onClick);
       }
       return button;
     }
     case "label": {
-      const label = new QLabel(element.props.text || "");
+      const text = element.props.text;
+      const label = new QLabel(isSignal(text) ? text.get().toString() : (text || ""));
+      if (isSignal(text)) {
+        text.connect((value) => {
+          label.setText(value.toString());
+        });
+      }
       return label;
     }
     case "input": {

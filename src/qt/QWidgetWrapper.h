@@ -18,4 +18,5 @@ private:
     Napi::Value SetWindowTitle(const Napi::CallbackInfo& info);
     Napi::Value Show(const Napi::CallbackInfo& info);
     Napi::Value SetLayout(const Napi::CallbackInfo& info);
+    Napi::Value Resize(const Napi::CallbackInfo& info);
 }; 

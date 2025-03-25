@@ -10,11 +10,13 @@ public:
     ~QLineEditWrapper();
 
     ::QLineEdit* GetInstance() { return instance; }
+    Napi::Value SetText(const Napi::CallbackInfo& info);
+    Napi::Value TextChanged(const Napi::CallbackInfo& info);
 
 private:
     static Napi::FunctionReference constructor;
     ::QLineEdit* instance;
+    Napi::Env env_;
 
-    Napi::Value SetText(const Napi::CallbackInfo& info);
     Napi::Value Text(const Napi::CallbackInfo& info);
 }; 

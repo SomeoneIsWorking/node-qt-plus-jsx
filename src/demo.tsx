@@ -1,43 +1,24 @@
 import { createRequire } from "module";
+import { Signal } from "./signal";
 const require = createRequire(import.meta.url);
 const qt = require("../build/Release/node-qt.node");
 
 // Import JSX support
-import { createElement, createWidget, JSXElement } from "./qt-jsx";
-
-// Signal implementation
-class Signal<T> {
-  private value: T;
-  private listeners: ((value: T) => void)[] = [];
-
-  constructor(initialValue: T) {
-    this.value = initialValue;
-  }
-
-  get(): T {
-    return this.value;
-  }
-
-  emit(newValue: T) {
-    this.value = newValue;
-    this.listeners.forEach((listener) => listener(newValue));
-  }
-
-  connect(listener: (value: T) => void) {
-    this.listeners.push(listener);
-    return () => {
-      this.listeners = this.listeners.filter((l) => l !== listener);
-    };
-  }
-}
+import { createWidget } from "./qt-jsx";
 
 // Counter component with signal
 const Counter = () => {
   const countSignal = new Signal<number>(0);
+  const labelSignal = new Signal<string>(`Counter: ${countSignal.get()}`);
+
+  // Update label when count changes
+  countSignal.connect((count) => {
+    labelSignal.emit(`Counter: ${count}`);
+  });
 
   return (
     <vbox>
-      <label text={`Counter: ${countSignal.get()}`} />
+      <label text={labelSignal} />
       <button
         text="Increment"
         onClick={() => {
@@ -53,6 +34,25 @@ const Counter = () => {
 const TodoList = () => {
   const todosSignal = new Signal<string[]>([]);
   const inputSignal = new Signal<string>("");
+  const todosContainer = new qt.QWidget();
+  const todosLayout = new qt.QVBoxLayout();
+  todosContainer.setLayout(todosLayout);
+
+  // Update todos display when the signal changes
+  todosSignal.connect((todos) => {
+    // Clear existing todos
+    while(todosLayout.count() > 0) {
+      const item = todosLayout.takeAt(0);
+      if (item.widget()) {
+        item.widget().deleteLater();
+      }
+    }
+    // Add new todos
+    todos.forEach(todo => {
+      const label = new qt.QLabel(todo);
+      todosLayout.addWidget(label);
+    });
+  });
 
   return (
     <vbox>
@@ -72,11 +72,7 @@ const TodoList = () => {
           }
         }}
       />
-      <vbox>
-        {todosSignal.get().map((todo: string) => (
-          <label text={todo} />
-        ))}
-      </vbox>
+      <widget>{todosContainer}</widget>
     </vbox>
   );
 };
@@ -90,8 +86,8 @@ const App = () => {
           <label text="Qt TSX Demo1" />
           <label text="Qt TSX Demo2" />
           <vbox>
-            <label text="Qt TSX Demo3" />
-            <label text="Qt TSX Demo4" />
+            <Counter />
+            <TodoList />
           </vbox>
         </vbox>
       </window>

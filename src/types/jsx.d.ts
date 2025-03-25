@@ -1,3 +1,7 @@
+import { Signal } from "../signal";
+
+type SignalValue<T> = T | Signal<T>;
+
 declare global {
     namespace JSX {
         interface ElementClass {
@@ -12,7 +16,7 @@ declare global {
             type: string | Function;
             props: {
                 children?: JSXChildren;
-                text?: string;
+                text?: SignalValue<string>;
                 onClick?: () => void;
                 onChange?: (text: string) => void;
                 title?: string;
@@ -27,9 +31,9 @@ declare global {
             widget: { children?: JSXChildren };
             vbox: { children?: JSXChildren };
             hbox: { children?: JSXChildren };
-            button: { onClick?: () => void; text?: string; children?: JSXChildren };
-            label: { text?: string; children?: JSXChildren };
-            input: { onChange?: (text: string) => void; text?: string };
+            button: { onClick?: () => void; text?: SignalValue<string>; children?: JSXChildren };
+            label: { text?: SignalValue<string>; children?: JSXChildren };
+            input: { onChange?: (text: string) => void; text?: SignalValue<string> };
             application: { children?: JSXChildren };
             window: { title?: string; width?: number; height?: number; children?: JSXChildren };
             table: { children?: JSXChildren };

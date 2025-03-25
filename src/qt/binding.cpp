@@ -6,6 +6,7 @@
 #include "QTableViewWrapper.h"
 #include "QHBoxLayoutWrapper.h"
 #include "QVBoxLayoutWrapper.h"
+#include "QPushButtonWrapper.h"
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
     QApplicationWrapper::Init(env, exports);
@@ -15,6 +16,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
     QTableViewWrapper::Init(env, exports);
     QHBoxLayoutWrapper::Init(env, exports);
     QVBoxLayoutWrapper::Init(env, exports);
+    QPushButtonWrapper::Init(env, exports);
     
     return exports;
 }
