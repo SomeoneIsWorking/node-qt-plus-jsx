@@ -87,8 +87,12 @@ const App = () => {
     <application>
       <window title="Qt TSX Demo" width={400} height={300}>
         <vbox>
-            <label text="Qt TSX Demo" />
-            <label text="Qt TSX Demo" />
+          <label text="Qt TSX Demo1" />
+          <label text="Qt TSX Demo2" />
+          <vbox>
+            <label text="Qt TSX Demo3" />
+            <label text="Qt TSX Demo4" />
+          </vbox>
         </vbox>
       </window>
     </application>

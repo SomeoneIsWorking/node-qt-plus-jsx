@@ -1,0 +1,9 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+We use "npx tsx" to run tsx, don't use ts-node ever, don't try to install it
+You created the Qt bindings in src/qt, you are free to update them as needed
+Compile Qt bindings with node-gyp
+Please don't rebuild node-gyp if you haven't changed any C++ code in the last change

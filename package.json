@@ -1,18 +1,20 @@
 {
   "name": "node-qt",
   "version": "1.0.0",
+  "description": "Node.js bindings for Qt",
+  "main": "index.js",
   "type": "module",
-  "main": "dist/demo.js",
   "scripts": {
-    "build": "tsc",
-    "start": "node dist/demo.js",
-    "dev": "tsc -w",
-    "demo": "tsx src/demo.ts"
+    "install": "node-gyp rebuild",
+    "build": "node-gyp rebuild",
+    "start": "tsx src/nested-layouts.ts"
+  },
+  "dependencies": {
+    "node-addon-api": "^7.0.0"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
-    "ts-node": "^10.9.2",
-    "tsx": "^4.19.3",
-    "typescript": "^5.0.0"
+    "@types/node": "^22.13.13",
+    "tsx": "^4.7.1",
+    "typescript": "^5.3.3"
   }
 }

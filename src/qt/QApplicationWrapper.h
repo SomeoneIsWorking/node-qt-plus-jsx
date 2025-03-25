@@ -1,5 +1,7 @@
 #pragma once
-#include "base.h"
+
+#include <napi.h>
+#include <QApplication>
 
 class QApplicationWrapper : public Napi::ObjectWrap<QApplicationWrapper> {
 public:
@@ -8,6 +10,8 @@ public:
     ~QApplicationWrapper();
 
 private:
+    static Napi::FunctionReference constructor;
+    ::QApplication* instance;
+    
     Napi::Value Exec(const Napi::CallbackInfo& info);
-    QApplication* app;
 }; 
