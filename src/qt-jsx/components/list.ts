@@ -12,13 +12,17 @@ export function createListWidget(props: any): any {
     const itemSource = props.items;
     const items = itemSource instanceof ReactiveList ? itemSource.get() : itemSource;
     const template = props.children[0];
-
     const templateFn = template.props.children[0];
+
+    // Store rendered items with their widgets
+    const renderedItems: { item: any, widget: any, isLayout: boolean }[] = [];
 
     items.forEach((item: any, index: number) => {
       const element = templateFn({ item, index });
       const widget = render(element);
       const isLayout = ["vbox", "hbox"].includes(element.type);
+      
+      renderedItems.push({ item, widget, isLayout });
       
       if (isLayout) {
         layout.addLayout(widget);
@@ -34,16 +38,18 @@ export function createListWidget(props: any): any {
           const widget = render(element);
           const isLayout = ["vbox", "hbox"].includes(element.type);
           
+          renderedItems.push({ item: operation.item, widget, isLayout });
+          
           if (isLayout) {
             layout.addLayout(widget);
           } else {
             layout.addWidget(widget);
           }
         } else if (operation.type === 'removed') {
-          const itemIndex = items.findIndex(i => i === operation.item);
+          const itemIndex = renderedItems.findIndex(i => i.item === operation.item);
           if (itemIndex !== -1) {
-            const { widget, isLayout } = items[itemIndex];
-            items.splice(itemIndex, 1);
+            const { widget, isLayout } = renderedItems[itemIndex];
+            renderedItems.splice(itemIndex, 1);
             
             if (isLayout) {
               layout.removeLayout(widget);
