@@ -1,7 +1,7 @@
 {
-  "name": "node-qt",
+  "name": "node-qt-jsx",
   "version": "1.0.0",
-  "description": "Node.js bindings for Qt",
+  "description": "Node.js bindings for Qt with JSX support",
   "main": "index.js",
   "type": "module",
   "scripts": {

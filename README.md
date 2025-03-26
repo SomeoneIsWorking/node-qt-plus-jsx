@@ -1,97 +1,86 @@
-# Node-Qt
+# node-qt-jsx
 
-A declarative Qt framework for Node.js using Bun, inspired by PyEdifice and React.
+A Node.js binding for Qt with JSX support, allowing you to create native desktop applications using Node.js and Qt.
+
+## About
+
+This project was created through vibe coding so if you have bias against that, I would recommend you stop here.
 
 ## Features
 
-- Declarative UI components
-- Signal-based state management
-- TypeScript support
-- Built on top of Qt
-- Modern component lifecycle
+- Native Qt bindings for Node.js
+- JSX support for declarative UI creation
+- Reactive list components
+- Support for common Qt widgets (QWidget, QLabel, QLineEdit, QPushButton, etc.)
+- Layout management (QVBoxLayout, QHBoxLayout)
+
+## Prerequisites
+
+- Node.js (v14 or higher)
+- Qt development libraries
+- node-gyp (for building native modules)
 
 ## Installation
 
 ```bash
-bun install node-qt
+npm install node-qt-jsx
 ```
 
 ## Quick Start
 
 ```typescript
-import { View, Button, Text } from './components';
+import { QApplication, QWidget, QVBoxLayout, QLabel, QPushButton } from 'node-qt-jsx';
 
-class App extends View {
-  private count: number = 0;
+const app = new QApplication();
+const window = new QWidget();
+const layout = new QVBoxLayout();
 
-  render(): Component[] {
-    return [
-      new HStack({
-        children: [
-          new Text({ text: `Count: ${this.count}` }),
-          new Button({
-            onClick: () => {
-              this.count++;
-              this.setState({ count: this.count });
-            }
-          })
-        ]
-      })
-    ];
-  }
-}
+const label = new QLabel("Hello, Qt!");
+const button = new QPushButton("Click me!");
+
+layout.addWidget(label);
+layout.addWidget(button);
+window.setLayout(layout);
+window.show();
+
+app.exec();
 ```
 
-## Components
-
-### View
-A container component that arranges its children vertically.
-
-### HStack
-A container component that arranges its children horizontally.
-
-### Button
-A button component that emits an onClick signal when clicked.
-
-### Text
-A label component that displays text.
-
-### TextInput
-A text input component that emits an onChange signal when the text changes.
-
-## State Management
-
-Components can maintain state using the `setState` method:
+## JSX Example
 
 ```typescript
-this.setState({ count: this.count + 1 });
-```
+import { QApplication, QWidget, QVBoxLayout, QLabel, QPushButton } from 'node-qt-jsx';
 
-## Signals
-
-Signals are used for event handling and state updates:
-
-```typescript
-private onClickSignal: Signal<void>;
-
-constructor(props: ComponentProps & { onClick?: () => void }) {
-  super(props);
-  this.onClickSignal = this.createSignal<void>('onClick');
-  if (props.onClick) {
-    this.onClickSignal.add(props.onClick);
-  }
+function App() {
+  return (
+    <QWidget>
+      <QVBoxLayout>
+        <QLabel>Hello, Qt!</QLabel>
+        <QPushButton>Click me!</QPushButton>
+      </QVBoxLayout>
+    </QWidget>
+  );
 }
+
+const app = new QApplication();
+const window = render(<App />);
+window.show();
+app.exec();
 ```
 
-## Development
+## Building from Source
 
 ```bash
-# Install dependencies
-bun install
+git clone https://github.com/yourusername/node-qt-jsx.git
+cd node-qt-jsx
+npm install
+npm run build
+```
 
-# Run the example
-bun run start
+## Contributing
 
-# Build the project
-bun run build
-``` 
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details. 
