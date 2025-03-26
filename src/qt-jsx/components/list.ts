@@ -8,59 +8,61 @@ export function createListWidget(props: any): any {
   const layout = new qt.QVBoxLayout();
   list.setLayout(layout);
 
-  if (props.items && props.children) {
-    const itemSource = props.items;
-    const items = itemSource instanceof ReactiveList ? itemSource.get() : itemSource;
-    const template = props.children[0];
-    const templateFn = template.props.children[0];
+  const itemSource = props.items;
+  const items =
+    itemSource instanceof ReactiveList ? itemSource.get() : itemSource;
+  const template = props.children[0];
+  const templateFn = template.props.children[0];
 
-    // Store rendered items with their widgets
-    const renderedItems: { item: any, widget: any, isLayout: boolean }[] = [];
+  // Store rendered items with their widgets
+  const renderedItems: { item: any; widget: any; isLayout: boolean }[] = [];
 
-    items.forEach((item: any, index: number) => {
-      const element = templateFn({ item, index });
-      const widget = render(element);
-      const isLayout = ["vbox", "hbox"].includes(element.type);
-      
-      renderedItems.push({ item, widget, isLayout });
-      
-      if (isLayout) {
-        layout.addLayout(widget);
-      } else {
-        layout.addWidget(widget);
-      }
-    });
+  const performAdd = (item: any, index: number) => {
+    const element = templateFn({ item, index });
+    const widget = render(element);
+    const isLayout = ["vbox", "hbox"].includes(element.type);
 
-    if (itemSource instanceof ReactiveList) {
-      itemSource.connect((items: any[], operation: { type: 'added' | 'removed', item: any, index: number }) => {
-        if (operation.type === 'added') {
-          const element = templateFn({ item: operation.item, index: operation.index });
-          const widget = render(element);
-          const isLayout = ["vbox", "hbox"].includes(element.type);
-          
-          renderedItems.push({ item: operation.item, widget, isLayout });
-          
-          if (isLayout) {
-            layout.addLayout(widget);
-          } else {
-            layout.addWidget(widget);
-          }
-        } else if (operation.type === 'removed') {
-          const itemIndex = renderedItems.findIndex(i => i.item === operation.item);
-          if (itemIndex !== -1) {
-            const { widget, isLayout } = renderedItems[itemIndex];
-            renderedItems.splice(itemIndex, 1);
-            
-            if (isLayout) {
-              layout.removeLayout(widget);
-            } else {
-              layout.removeWidget(widget);
-            }
-            widget.deleteLater();
-          }
-        }
-      });
+    renderedItems.push({ item, widget, isLayout });
+
+    if (isLayout) {
+      layout.addLayout(widget);
+    } else {
+      layout.addWidget(widget);
     }
+  };
+
+  const performRemove = (index: number) => {
+    const { widget, isLayout } = renderedItems[index];
+    renderedItems.splice(index, 1);
+
+    if (isLayout) {
+      layout.removeItem(widget);
+    } else {
+      layout.removeWidget(widget);
+    }
+
+    widget.deleteLater();
+    layout.invalidate();
+  };
+
+  // Initial items
+  items.forEach((item: any, index: number) => performAdd(item, index));
+
+  if (itemSource instanceof ReactiveList) {
+    const operations = {
+      added: ({ item, index }: { item: any; index: number }) =>
+        performAdd(item, index),
+      removed: ({ index }: { index: number }) => performRemove(index),
+    };
+
+    itemSource.connect(
+      (
+        _items: any[],
+        operation: { type: "added" | "removed"; item: any; index: number }
+      ) => {
+        operations[operation.type](operation);
+      }
+    );
   }
 
   return list;

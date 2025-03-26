@@ -9,8 +9,9 @@ Napi::Object QHBoxLayoutWrapper::Init(Napi::Env env, Napi::Object exports) {
         InstanceMethod("addWidget", &QHBoxLayoutWrapper::AddWidget),
         InstanceMethod("addLayout", &QHBoxLayoutWrapper::AddLayout),
         InstanceMethod("removeWidget", &QHBoxLayoutWrapper::RemoveWidget),
-        InstanceMethod("removeLayout", &QHBoxLayoutWrapper::RemoveLayout),
+        InstanceMethod("removeItem", &QHBoxLayoutWrapper::RemoveItem),
         InstanceMethod("deleteLater", &QHBoxLayoutWrapper::DeleteLater),
+        InstanceMethod("invalidate", &QHBoxLayoutWrapper::Invalidate),
     });
 
     constructor = Napi::Persistent(func);
@@ -78,7 +79,7 @@ Napi::Value QHBoxLayoutWrapper::RemoveWidget(const Napi::CallbackInfo& info) {
     return info.This();
 }
 
-Napi::Value QHBoxLayoutWrapper::RemoveLayout(const Napi::CallbackInfo& info) {
+Napi::Value QHBoxLayoutWrapper::RemoveItem(const Napi::CallbackInfo& info) {
     if (info.Length() < 1) {
         Napi::TypeError::New(env_, "Wrong number of arguments").ThrowAsJavaScriptException();
         return env_.Null();
@@ -101,4 +102,10 @@ Napi::Value QHBoxLayoutWrapper::DeleteLater(const Napi::CallbackInfo& info) {
     std::cout << "Scheduling QHBoxLayout for deletion" << std::endl;
     instance->deleteLater();
     return env.Null();
+}
+
+Napi::Value QHBoxLayoutWrapper::Invalidate(const Napi::CallbackInfo& info) {
+    Napi::Env env = info.Env();
+    instance->invalidate();
+    return env.Undefined();
 } 
