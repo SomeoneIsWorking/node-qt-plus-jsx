@@ -100,6 +100,16 @@ Napi::Value QHBoxLayoutWrapper::DeleteLater(const Napi::CallbackInfo& info) {
     Napi::HandleScope scope(env);
 
     std::cout << "Scheduling QHBoxLayout for deletion" << std::endl;
+    
+    // Hide all child widgets
+    for (int i = 0; i < instance->count(); ++i) {
+        QLayoutItem* item = instance->itemAt(i);
+        if (QWidget* widget = item->widget()) {
+            widget->hide();
+            widget->deleteLater();
+        }
+    }
+    
     instance->deleteLater();
     return env.Null();
 }
