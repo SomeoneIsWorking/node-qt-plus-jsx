@@ -1,6 +1,6 @@
-import type { QWidget } from './base';
+import type { QObject } from './base';
 
-export interface QTableView extends QWidget {
+export interface QTableView extends QObject {
     // Add table view specific methods as needed
 }
 

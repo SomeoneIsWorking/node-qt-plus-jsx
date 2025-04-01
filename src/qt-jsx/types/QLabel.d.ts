@@ -1,6 +1,6 @@
-import type { QWidget } from './base';
+import type { QObject } from './base';
 
-export interface QLabel extends QWidget {
+export interface QLabel extends QObject {
     setText(text: string): void;
 }
 

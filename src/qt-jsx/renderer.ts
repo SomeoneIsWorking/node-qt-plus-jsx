@@ -8,8 +8,10 @@ import { createButtonWidget } from "./components/button";
 import { createInputWidget } from "./components/input";
 import { createListWidget } from "./components/list";
 import { createTableWidget } from "./components/table";
+import { QApplication } from "./types/QApplication";
+import { QObject } from "./types/base";
 
-const widgetCreators: { [key: string]: (props: any) => any } = {
+const widgetCreators: { [key: string]: (props: any) => QObject } = {
   application: createApplicationWidget,
   window: createWindowWidget,
   vbox: createVBoxWidget,
@@ -35,7 +37,7 @@ export function render(element: JSXElement): any {
     const result = creator(element.props);
 
     if (element.type === "application") {
-      result.exec();
+      (result as QApplication).exec();
     }
 
     return result;

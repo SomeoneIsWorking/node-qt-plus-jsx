@@ -1,14 +1,10 @@
-export interface QWidget {
-  setWindowTitle(title: string): void;
-  show(): void;
-  setLayout(layout: QLayout): void;
-  resize(width: number, height: number): void;
+export interface QObject {
   deleteLater(): void;
 }
 
 export interface QLayout {
-  addWidget(widget: QWidget): void;
+  addWidget(widget: QObject): void;
   addLayout(layout: QLayout): void;
-  removeWidget(widget: QWidget): void;
+  removeWidget(widget: QObject): void;
   removeItem(item: QLayout): void;
 }

@@ -1,6 +1,6 @@
-import type { QWidget } from './base';
+import type { QObject } from './base';
 
-export interface QLineEdit extends QWidget {
+export interface QLineEdit extends QObject {
     setText(text: string): void;
     text(): string;
     textChanged(callback: (text: string) => void): void;

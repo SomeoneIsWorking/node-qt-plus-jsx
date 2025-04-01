@@ -1,6 +1,6 @@
-import type { QWidget } from './base';
+import type { QObject } from './base';
 
-export interface QPushButton extends QWidget {
+export interface QPushButton extends QObject {
     setText(text: string): void;
     clicked(callback: () => void): void;
 }

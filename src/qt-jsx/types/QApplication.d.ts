@@ -1,4 +1,6 @@
-export interface QApplication {
+import { QObject } from "./base";
+
+export interface QApplication extends QObject {
     exec(): number;
 }
 
