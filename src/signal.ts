@@ -30,7 +30,7 @@ export function createSignal<T>(initialValue: T): Signal<T> {
     return new Signal(initialValue);
 }
 
-type SignalOrValue<T> = T | Signal<T>;
+export type SignalOrValue<T> = T | Signal<T>;
 
 export function getValue<T>(value: SignalOrValue<T>): T {
     return isSignal(value) ? value.get() : value;

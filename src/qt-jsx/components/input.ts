@@ -1,26 +1,33 @@
 import { createElement } from "../jsx";
 import { qt } from "../qt-export";
-import { getValue, isSignal } from "../../signal";
+import { bindIfSignal, getValue, type SignalOrValue } from "../../signal";
+import type { QLineEdit } from "../types/QLineEdit";
 
-export function createInputWidget(props: any): any {
+interface InputProps {
+    value?: SignalOrValue<string>;
+    onChange?: (value: string) => void;
+    children?: any;
+}
+
+export function createInputWidget(props: InputProps): QLineEdit {
+  const value = getValue(props.value ?? "");
+
   const input = new qt.QLineEdit();
-  
-  const text = props.text !== undefined ? (isSignal(props.text) ? getValue(props.text) : props.text) : "";
-  input.setText(String(text));
-  
-  if (isSignal(props.text)) {
-    props.text.connect((newValue: any) => {
-      input.setText(String(newValue));
-    });
-  }
-  
+  input.setText(value);
+
   if (props.onChange) {
     input.textChanged(props.onChange);
   }
-  
+
+  if (props.value) {
+    bindIfSignal(props.value, (value: string) => {
+      input.setText(value);
+    });
+  }
+
   return input;
 }
 
-export default function Input(props: any): any {
+export default function Input(props: InputProps): QLineEdit {
   return createElement("input", props);
 } 

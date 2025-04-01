@@ -1,7 +1,14 @@
 import { createElement } from "../jsx";
 import { qt } from "../qt-export";
+import type { QPushButton } from "../types/QPushButton";
 
-export function createButtonWidget(props: any): any {
+interface ButtonProps {
+    text?: string;
+    onClick?: () => void;
+    children?: any;
+}
+
+export function createButtonWidget(props: ButtonProps): QPushButton {
   const button = new qt.QPushButton();
   
   if (props.text) {
@@ -15,6 +22,6 @@ export function createButtonWidget(props: any): any {
   return button;
 }
 
-export default function Button(props: any): any {
+export default function Button(props: ButtonProps): QPushButton {
   return createElement("button", props);
 } 

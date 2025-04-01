@@ -7,15 +7,11 @@ export function createHBoxWidget(props: any): any {
 
   if (props.children) {
     props.children.forEach((child: any) => {
-      if (child) {
-        const childWidget = render(child);
-        if (childWidget) {
-          if ("addLayout" in childWidget) {
-            layout.addLayout(childWidget);
-          } else {
-            layout.addWidget(childWidget);
-          }
-        }
+      const childWidget = render(child);
+      if (["hbox", "hbox"].includes(child.type)) {
+        layout.addLayout(childWidget);
+      } else {
+        layout.addWidget(childWidget);
       }
     });
   }

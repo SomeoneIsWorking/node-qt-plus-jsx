@@ -1,18 +1,26 @@
 import { createElement } from "../jsx";
 import { qt } from "../qt-export";
-import { bindIfSignal, getValue } from "../../signal";
+import { bindIfSignal, getValue, type SignalOrValue } from "../../signal";
+import type { QLabel } from "../types/QLabel";
 
-export function createLabelWidget(props: any): any {
-  const text = getValue(props.text);
+interface LabelProps {
+    text?: SignalOrValue<string | number>;
+    children?: any;
+}
+
+export function createLabelWidget(props: LabelProps): QLabel {
+  const text = getValue(props.text ?? "");
 
   const label = new qt.QLabel(String(text));
-  bindIfSignal(props.text, (text: any) => {
-    label.setText(text?.toString() ?? "");
-  });
+  if (props.text) {
+    bindIfSignal(props.text, (text: string | number) => {
+      label.setText(text?.toString() ?? "");
+    });
+  }
 
   return label;
 }
 
-export default function Label(props: any): any {
+export default function Label(props: LabelProps): QLabel {
   return createElement("label", props);
 }
