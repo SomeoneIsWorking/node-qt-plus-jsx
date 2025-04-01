@@ -1,4 +1,4 @@
-import { qt } from "../../qt-jsx/qt-export";
+import { qt } from "../../src/qt-jsx/qt-export";
 
 // Create application and store in global scope
 const app = new qt.QApplication();

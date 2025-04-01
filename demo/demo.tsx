@@ -1,16 +1,16 @@
-import { createSignal } from "../signal";
-import { createElement } from "./jsx";
-import Application from "./components/application";
-import Window from "./components/window";
-import VBox from "./components/vbox";
-import HBox from "./components/hbox";
-import Button from "./components/button";
-import Input from "./components/input";
-import Label from "./components/label";
-import List, { Template } from "./components/list";
-import Table from "./components/table";
-import { render } from "./renderer";
-import { reactiveList } from "../reactive-list";
+import { createSignal } from "../src/signal";
+import { createElement } from "../src/qt-jsx/jsx";
+import Application from "../src/qt-jsx/components/application";
+import Window from "../src/qt-jsx/components/window";
+import VBox from "../src/qt-jsx/components/vbox";
+import HBox from "../src/qt-jsx/components/hbox";
+import Button from "../src/qt-jsx/components/button";
+import Input from "../src/qt-jsx/components/input";
+import Label from "../src/qt-jsx/components/label";
+import List, { Template } from "../src/qt-jsx/components/list";
+import Table from "../src/qt-jsx/components/table";
+import { render } from "../src/qt-jsx/renderer";
+import { reactiveList } from "../src/reactive-list";
 
 // Create some signals for state management
 const counter = createSignal(0);
@@ -26,11 +26,11 @@ function ItemTemplate({ item, index }: { item: any; index: number }) {
   return (
     <HBox>
       <Label text={`${index + 1}. ${item.name}`} />
-      <Button 
-        text="Delete" 
+      <Button
+        text="Delete"
         onClick={() => {
           items.remove(item);
-        }} 
+        }}
       />
     </HBox>
   );
@@ -45,26 +45,24 @@ function App() {
           <HBox>
             <Label text="Counter: " />
             <Label text={counter} />
-            <Button 
-              text="Increment" 
-              onClick={() => counter.set(counter.get() + 1)} 
+            <Button
+              text="Increment"
+              onClick={() => counter.set(counter.get() + 1)}
             />
           </HBox>
 
           <HBox>
             <Label text="Input: " />
-            <Input 
-              text={inputText} 
-              onChange={(text: string) => inputText.set(text)} 
+            <Input
+              text={inputText}
+              onChange={(text: string) => inputText.set(text)}
             />
             <Label text={inputText} />
           </HBox>
 
           <Label text="List of Items:" />
           <List items={items}>
-            <Template>
-              {ItemTemplate}
-            </Template>
+            <Template>{ItemTemplate}</Template>
           </List>
 
           <Label text="Table:" />

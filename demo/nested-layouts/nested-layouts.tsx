@@ -1,6 +1,6 @@
 /** @jsx createElement */
-import { createWidget, createElement } from '../../qt-jsx.js';
-
+import { createElement } from "../../src/qt-jsx/jsx";
+import { render } from "../../src/qt-jsx/renderer";
 // Main application component
 const App = () => {
   return (
@@ -19,4 +19,4 @@ const App = () => {
 };
 
 // Create and run the application
-createWidget(<App />); 
+render(<App />);
