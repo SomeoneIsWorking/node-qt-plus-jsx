@@ -7,7 +7,7 @@ export function createLabelWidget(props: any): any {
 
   const label = new qt.QLabel(String(text));
   bindIfSignal(props.text, (text: any) => {
-    label.setText(text);
+    label.setText(text?.toString() ?? "");
   });
 
   return label;
