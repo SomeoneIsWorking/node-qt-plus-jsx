@@ -6,6 +6,10 @@ export class ReactiveList<T> {
     operation: { type: "added" | "removed"; item: T; index: number }
   ) => void)[] = [];
 
+  get length() {
+    return this.items.length;
+  }
+
   constructor(initialItems: T[] = []) {
     this.items = [...initialItems];
   }

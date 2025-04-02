@@ -11,14 +11,15 @@ import QListWidget from "../src/qt-jsx/components/QListWidget";
 import QTableWidget from "../src/qt-jsx/components/QTableWidget";
 import { render } from "../src/qt-jsx/renderer";
 import { reactiveList } from "../src/reactive-list";
+import { randomUUID } from "crypto";
 
 // Create some signals for state management
 const counter = createSignal(0);
 const inputText = createSignal("");
 const items = reactiveList([
-  { id: 1, name: "Item 1" },
-  { id: 2, name: "Item 2" },
-  { id: 3, name: "Item 3" },
+  { id: "1", name: "Item 1" },
+  { id: "2", name: "Item 2" },
+  { id: "3", name: "Item 3" },
 ]);
 
 // Create a template function for the list
@@ -56,12 +57,19 @@ function App() {
               text={getValue(inputText)}
               onChange={(text: string) => inputText.set(text)}
             />
-            <QLabel text={getValue(inputText)} />
           </QHBoxLayout>
 
           <QLabel text="List of Items:" />
-          <QListWidget items={items} template={ItemTemplate} />
-
+          <QListWidget items={items}>{ItemTemplate}</QListWidget>
+          <QPushButton
+            text="Add Item"
+            onClick={() =>
+              items.insert({
+                id: randomUUID().toString(),
+                name: inputText.get(),
+              })
+            }
+          />
           <QLabel text="Table:" />
           <QTableWidget />
         </QVBoxLayout>

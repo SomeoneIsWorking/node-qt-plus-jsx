@@ -1,11 +1,10 @@
 import type { QLabel as QLabelType } from "../types/QLabel";
 import type { JSXElement } from "../types";
 import { qt } from "../qt-export";
-import { isSignal, getValue, type Signal } from "../../signal";
+import { isSignal, getValue, type Signal, SignalOrValue } from "../../signal";
 
 interface LabelProps {
-  text?: string | Signal<string>;
-  children?: any;
+  text: SignalOrValue<string>;
 }
 
 function createQLabel(props: LabelProps): QLabelType {
@@ -26,7 +25,7 @@ export default function QLabel(props: LabelProps): JSXElement {
     type: "label",
     props: {
       ...props,
-      children: props.children || [],
+      children: [],
       createWidget: () => createQLabel(props),
     },
   };

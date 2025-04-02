@@ -46,27 +46,97 @@ window.show();
 app.exec();
 ```
 
-## JSX Example
+## JSX Demo Application
+
+Here's a more comprehensive demo showcasing various features including reactive state management, list components, and layouts:
 
 ```typescript
-import { QApplication, QWidget, QVBoxLayout, QLabel, QPushButton } from 'node-qt-jsx';
+import { computed, createSignal, getValue } from "node-qt-jsx";
+import { createElement } from "node-qt-jsx";
+import QApplication from "node-qt-jsx/components/QApplication";
+import QMainWindow from "node-qt-jsx/components/QMainWindow";
+import QVBoxLayout from "node-qt-jsx/components/QVBoxLayout";
+import QHBoxLayout from "node-qt-jsx/components/QHBoxLayout";
+import QPushButton from "node-qt-jsx/components/QPushButton";
+import QLineEdit from "node-qt-jsx/components/QLineEdit";
+import QLabel from "node-qt-jsx/components/QLabel";
+import QListWidget from "node-qt-jsx/components/QListWidget";
+import QTableWidget from "node-qt-jsx/components/QTableWidget";
+import { render } from "node-qt-jsx/renderer";
+import { reactiveList } from "node-qt-jsx/reactive-list";
+import { randomUUID } from "crypto";
 
-function App() {
+// Create some signals for state management
+const counter = createSignal(0);
+const inputText = createSignal("");
+const items = reactiveList([
+  { id: "1", name: "Item 1" },
+  { id: "2", name: "Item 2" },
+  { id: "3", name: "Item 3" },
+]);
+
+// Create a template function for the list
+function ItemTemplate({ item, index }: { item: any; index: number }) {
   return (
-    <QWidget>
-      <QVBoxLayout>
-        <QLabel>Hello, Qt!</QLabel>
-        <QPushButton>Click me!</QPushButton>
-      </QVBoxLayout>
-    </QWidget>
+    <QHBoxLayout>
+      <QLabel text={`${index + 1}. ${item.name}`} />
+      <QPushButton
+        text="Delete"
+        onClick={() => {
+          items.remove(item);
+        }}
+      />
+    </QHBoxLayout>
   );
 }
 
-const app = new QApplication();
-const window = render(<App />);
-window.show();
-app.exec();
+// Main app
+function App() {
+  return (
+    <QApplication>
+      <QMainWindow title="Qt JSX Demo" width={800} height={600}>
+        <QVBoxLayout>
+          <QHBoxLayout>
+            <QLabel text={computed(() => "Counter: " + counter.get())} />
+            <QPushButton
+              text="Increment"
+              onClick={() => counter.set(counter.get() + 1)}
+            />
+          </QHBoxLayout>
+
+          <QHBoxLayout>
+            <QLabel text="Input: " />
+            <QLineEdit
+              text={getValue(inputText)}
+              onChange={(text: string) => inputText.set(text)}
+            />
+          </QHBoxLayout>
+
+          <QLabel text="List of Items:" />
+          <QListWidget items={items}>{ItemTemplate}</QListWidget>
+          <QPushButton
+            text="Add Item"
+            onClick={() =>
+              items.insert({
+                id: randomUUID().toString(),
+                name: inputText.get(),
+              })
+            }
+          />
+          <QLabel text="Table:" />
+          <QTableWidget />
+        </QVBoxLayout>
+      </QMainWindow>
+    </QApplication>
+  );
+}
+
+// Render the app
+render(<App />);
 ```
+
+Watch the demo in action:
+![Demo Application](demo/demo.gif)
 
 ## Building from Source
 

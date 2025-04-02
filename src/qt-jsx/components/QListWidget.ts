@@ -6,7 +6,6 @@ import { ReactiveList } from "../../reactive-list";
 
 interface ListWidgetProps<T = any> {
     items?: string[] | ReactiveList<T>;
-    template?: (props: { item: T; index: number }) => JSXElement;
     onItemSelected?: (index: number) => void;
     children?: any;
 }
@@ -18,16 +17,27 @@ function createQListWidget<T>(props: ListWidgetProps<T>): QWidget {
 
   const itemSource = props.items;
   const items = itemSource instanceof ReactiveList ? itemSource.get() : itemSource;
-  const template = props.template || ((props: { item: T; index: number }) => ({
-    type: "label",
-    props: { text: String(props.item) }
-  }));
+
+  // Extract template function from children
+  let template: ((props: { item: T; index: number }) => JSXElement) | undefined;
+  if (Array.isArray(props.children) && props.children.length === 1 && typeof props.children[0] === 'function') {
+    template = props.children[0];
+  } else if (typeof props.children === 'function') {
+    // Handle case where JSX might pass single child directly (less common but possible)
+    template = props.children;
+  }
+
+  if (!template) {
+    console.error("QListWidget requires a single child function component as a template.");
+    // Optionally return an empty widget or throw an error
+    return list; // Return empty list for now
+  }
 
   // Store rendered items with their widgets
   const renderedItems: { item: any; widget: any; isLayout: boolean }[] = [];
 
   const performAdd = (item: any, index: number) => {
-    const element = template({ item, index });
+    const element = template({ item, index }); // Use the extracted template
     const widget = render(element);
     if (!widget) return; // Skip if widget creation failed
 
@@ -76,11 +86,11 @@ function createQListWidget<T>(props: ListWidgetProps<T>): QWidget {
 }
 
 export default function QListWidget<T>(props: ListWidgetProps<T>): JSXElement {
+  // Simple export, createQListWidget handles children validation
   return {
     type: "widget",
     props: {
       ...props,
-      children: props.children || [],
       createWidget: () => createQListWidget(props)
     }
   };
