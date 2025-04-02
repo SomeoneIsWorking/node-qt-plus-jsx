@@ -7,3 +7,4 @@ export * from "./QTableView";
 export * from "./QVBoxLayout";
 export * from "./QHBoxLayout";
 export * from "./QPushButton";
+export * from "./jsx";

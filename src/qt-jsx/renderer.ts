@@ -1,47 +1,28 @@
-import { JSXElement, TemplateFunction } from "./types";
-import { createApplicationWidget } from "./components/application";
-import { createWindowWidget } from "./components/window";
-import { createVBoxWidget } from "./components/vbox";
-import { createHBoxWidget } from "./components/hbox";
-import { createLabelWidget } from "./components/label";
-import { createButtonWidget } from "./components/button";
-import { createInputWidget } from "./components/input";
-import { createListWidget } from "./components/list";
-import { createTableWidget } from "./components/table";
-import { QApplication } from "./types/QApplication";
+import { JSXElement } from "./types";
 import { QObject } from "./types/base";
+import type { QApplication } from "./types/QApplication";
+import type { QWidget } from "./types/QWidget";
 
-const widgetCreators: { [key: string]: (props: any) => QObject } = {
-  application: createApplicationWidget,
-  window: createWindowWidget,
-  vbox: createVBoxWidget,
-  hbox: createHBoxWidget,
-  label: createLabelWidget,
-  button: createButtonWidget,
-  input: createInputWidget,
-  list: createListWidget,
-  table: createTableWidget,
-};
+let app: QApplication | null = null;
 
 export function render(element: JSXElement): any {
-  if (typeof element === "string" || typeof element === "number") {
-    return element;
-  }
+  if (!element) return null;
 
-  if (element.type === "template") {
-    return element;
-  }
-
-  const creator = widgetCreators[element.type as string];
-  if (creator) {
-    const result = creator(element.props);
+  if (element.props.createWidget) {
+    const widget = element.props.createWidget();
 
     if (element.type === "application") {
-      (result as QApplication).exec();
+      app = widget as QApplication;
+      app.exec();
     }
 
-    return result;
+    // Only show if it's a QWidget (not a layout or other type)
+    if (widget && element.type === "widget") {
+      (widget as QWidget).show();
+    }
+
+    return widget;
   }
 
-  return element.props.widget;
+  return null;
 }
